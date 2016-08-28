@@ -6,7 +6,7 @@ use Erpk\Harvester\Module\Country\CountryModule;
 use Erpk\Common\EntityManager;
 use Erpk\Common\Entity\Country;
 
-$date = date("Y-m-d");
+$date = date("Y-m-d", time() - 60 * 60 * 24);
 $pm = new PoliticsModule($client);
 $cm = new CountryModule($client);
 
