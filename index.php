@@ -76,7 +76,7 @@ $pm = new PoliticsModule($client);
                             <?php
                         } else {
                             ?>
-                            <tr class="info">
+                            <tr class="warning">
                                 <th>Total In-Party</th>
                                 <td>
                                     <?php
@@ -93,14 +93,16 @@ $pm = new PoliticsModule($client);
                                             $pre = '';
                                         }
                                         $diff = abs($prevTotal - $inParty);
+                                        ?>
+                                        <span style="color: <?php echo $color ?>">(<?php echo $pre . $diff ?>)</span>
+                                        <?php
                                     }
                                     ?>
-                                    <span style="color: <?php echo $color ?>">(<?php echo $pre . $diff ?>)</span>
                                 </td>
                             </tr>
                             <tr>
                                 <th>Total Population</th>
-                                <th>
+                                <th style="text-align: center">
                                     <?php
                                     echo $row['total'] . "&nbsp;";
                                     $check = $pdo->prepare("SELECT * FROM count WHERE party = ? AND date = ?");
