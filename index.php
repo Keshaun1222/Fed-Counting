@@ -76,7 +76,7 @@ $pm = new PoliticsModule($client);
                             <?php
                         } else {
                             ?>
-                            <tr class="warning">
+                            <tr class="danger" style="color: black">
                                 <th>Total In-Party</th>
                                 <td>
                                     <?php
