@@ -57,7 +57,8 @@ $society = $cm->getSociety($country);
                                     <?php
                                     echo $row['total'] . "&nbsp;";
                                     $check = $pdo->prepare("SELECT * FROM count WHERE party = ? AND date = ?");
-                                    if ($check->execute([$row['party'], $date])) {
+                                    $check->execute([$row['party'], $date]);
+                                    if ($check->fetch() && isset($check->fetch()['total']) && $check->fetch()['total'] != 0) {
                                         $last = $check->fetch();
                                         if ($last['total'] > $row['total']) {
                                             $color = 'red';
