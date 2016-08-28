@@ -16,13 +16,16 @@ $em = EntityManager::getInstance();
 $countries = $em->getRepository(Country::class);
 $country = $countries->findOneByCode('US');
 $society = $cm->getSociety($country);
+$stmt = $pdo->prepare("INSERT INTO count VALUES (NULL, ?, ?, ?)");
 
 foreach ($ids as $id) {
     $party = $pm->getParty($id);
     $num = $party['members'];
-    $mysqli->query("INSERT INTO count VALUES (NULL, '$date', $id, $num)");
+    $stmt->execute([$date, $id, $num]);
+    //$mysqli->query("INSERT INTO count VALUES (NULL, '$date', $id, $num)");
 }
 
 $total = $society['active_citizens'];
 
-$mysqli->query("INSERT INTO count VALUES (NULL, '$date', 1, $total)");
+$stmt->execute([$date, 1, $total]);
+//$mysqli->query("INSERT INTO count VALUES (NULL, '$date', 1, $total)");

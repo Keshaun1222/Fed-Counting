@@ -17,8 +17,17 @@ $builder->setPassword(getenv('PASSWORD'));
 
 $client = $builder->getClient();
 
-$mysqli = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASS'), getenv('MYSQL_BASE'));
+$host = getenv('MYSQL_HOST');
+$user = getenv('MYSQL_USER');
+$pass = getenv('MYSQL_PASS');
+$base = getenv('MYSQL_BASE');
+$opt = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES => false,
+];
+
+//$mysqli = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASS'), getenv('MYSQL_BASE'));
+$pdo = new PDO("mysql:host=$host;dbname=$base;charset=utf-8", $user, $pass, $opt);
 
 date_default_timezone_set('America/Phoenix');
-
-$fedsID = 2263;
