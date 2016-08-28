@@ -28,6 +28,6 @@ $opt = [
 ];
 
 //$mysqli = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASS'), getenv('MYSQL_BASE'));
-$pdo = new PDO("mysql:host=$host;dbname=$base;charset=utf-8", $user, $pass, $opt);
+$pdo = new PDO("mysql:host=$host;dbname=$base;charset=utf8", $user, $pass, $opt);
 
 date_default_timezone_set('America/Phoenix');
