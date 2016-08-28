@@ -1,18 +1,9 @@
 <?php
 require_once 'config.php';
 
-use Erpk\Harvester\Module\Country\CountryModule;
 use Erpk\Harvester\Module\Politics\PoliticsModule;
-use Erpk\Common\EntityManager;
-use Erpk\Common\Entity\Country;
 
 $pm = new PoliticsModule($client);
-$cm = new CountryModule($client);
-
-$em = EntityManager::getInstance();
-$countries = $em->getRepository(Country::class);
-$country = $countries->findOneByCode('US');
-$society = $cm->getSociety($country);
 ?>
 <!DOCTYPE html>
 <html>
@@ -46,10 +37,13 @@ $society = $cm->getSociety($country);
                     <?php
                     $stmt = $pdo->prepare("SELECT * FROM count WHERE date = ?");
                     $stmt->execute([$_GET['date']]);
+                    $inParty = 0;
+                    $prevTotal = 0;
                     while ($row = $stmt->fetch()) {
                         if ($row['party'] != 1) {
                             $date = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($_GET['date'])), date("j", strtotime($_GET['date'])) - 1, date("Y", strtotime($_GET['date']))));
                             $party = $pm->getParty($row['party']);
+                            $inParty += $row['total'];
                             ?>
                             <tr>
                                 <th><?php echo $party['name'] ?></th>
@@ -60,6 +54,7 @@ $society = $cm->getSociety($country);
                                     $check->execute([$row['party'], $date]);
                                     $last = $check->fetch();
                                     if ($last && isset($last['total']) && $last['total'] != 0) {
+                                        $prevTotal += $last['total'];
                                         if ($last['total'] > $row['total']) {
                                             $color = 'red';
                                             $pre = '-';
@@ -80,7 +75,58 @@ $society = $cm->getSociety($country);
                             </tr>
                             <?php
                         } else {
-
+                            ?>
+                            <tr class="info">
+                                <th>Total In-Party</th>
+                                <td>
+                                    <?php
+                                    echo $inParty . "&nbsp;";
+                                    if ($prevTotal && $prevTotal != 0) {
+                                        if ($prevTotal > $inParty) {
+                                            $color = 'red';
+                                            $pre = '-';
+                                        } else if ($prevTotal < $inParty) {
+                                            $color = 'green';
+                                            $pre = '+';
+                                        } else {
+                                            $color = 'gray';
+                                            $pre = '';
+                                        }
+                                        $diff = abs($prevTotal - $inParty);
+                                    }
+                                    ?>
+                                    <span style="color: <?php echo $color ?>">(<?php echo $pre . $diff ?>)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total Population</th>
+                                <th>
+                                    <?php
+                                    echo $row['total'] . "&nbsp;";
+                                    $check = $pdo->prepare("SELECT * FROM count WHERE party = ? AND date = ?");
+                                    $check->execute([$row['party'], $date]);
+                                    $last = $check->fetch();
+                                    if ($last && isset($last['total']) && $last['total'] != 0) {
+                                        $prevTotal += $last['total'];
+                                        if ($last['total'] > $row['total']) {
+                                            $color = 'red';
+                                            $pre = '-';
+                                        } else if ($last['total'] < $row['total']) {
+                                            $color = 'green';
+                                            $pre = '+';
+                                        } else {
+                                            $color = 'gray';
+                                            $pre = '';
+                                        }
+                                        $diff = abs($last['total'] - $row['total']);
+                                        ?>
+                                        <span style="color: <?php echo $color ?>">(<?php echo $pre . $diff ?>)</span>
+                                        <?php
+                                    }
+                                    ?>
+                                </th>
+                            </tr>
+                            <?php
                         }
                     }
                     ?>
