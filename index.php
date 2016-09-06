@@ -35,13 +35,13 @@ $pm = new PoliticsModule($client);
                     <h3 class="cover-heading"><?php echo date("F j, Y", strtotime($_GET['date'])) ?></h3>
                     <table class="table table-hover">
                     <?php
-                    $stmt = $pdo->prepare("SELECT * FROM count WHERE date = ?");
+                    $stmt = $pdo->prepare("SELECT * FROM count WHERE date = ? ORDER BY id");
                     $stmt->execute([$_GET['date']]);
                     $inParty = 0;
                     $prevTotal = 0;
                     while ($row = $stmt->fetch()) {
+                        $date = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($_GET['date'])), date("j", strtotime($_GET['date'])) - 1, date("Y", strtotime($_GET['date']))));
                         if ($row['party'] != 1) {
-                            $date = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($_GET['date'])), date("j", strtotime($_GET['date'])) - 1, date("Y", strtotime($_GET['date']))));
                             $party = $pm->getParty($row['party']);
                             $inParty += $row['total'];
                             ?>
